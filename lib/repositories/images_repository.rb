@@ -7,7 +7,7 @@ class ImagesRepository
     @bucket = @client.bucket(BUCKET)
   end
 
-  def save(image)
+  def create(image)
     instance = TYPE.new(@bucket, image.uuid)
 
     instance.registers[:link] = image.link

@@ -14,7 +14,11 @@ RSpec.shared_context "shared image", :shared_context => :metadata do
   let(:image_repository) { ImagesRepository.new(client) }
   let(:image_bucket) { client.bucket('images') }
   let(:image_uuid) { 'x' * 24 }
-  let(:image) { image_repository.save(image_entity) }
+  let(:image) { image_repository.create(image_entity) }
+
+  before do
+    allow_any_instance_of(Image).to receive(:uuid).and_return(image_uuid)
+  end
 end
 
 RSpec.configure do |rspec|

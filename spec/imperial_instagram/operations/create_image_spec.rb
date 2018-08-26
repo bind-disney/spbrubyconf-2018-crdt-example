@@ -13,10 +13,10 @@ RSpec.describe Operations::CreateImage do
     let(:image) { Riak::Crdt::Map.new(image_bucket, image_uuid) } 
 
     it 'creates Comment and assigns it to Image' do
-      operation = Operations::CreateImage.new(client)
+      operation = Operations::CreateImage.new
       operation.call(image_params: image_params)
 
-      expect(image_repository.find_by_uuid(image_uuid)).to be_a_kind_of Riak
+      expect(image_repository.find_by_uuid(image_uuid)).to be_a_kind_of Riak::Crdt::Map
     end
   end
 end

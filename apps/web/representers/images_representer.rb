@@ -15,6 +15,5 @@ module Web::Representers
         represented.registers[:link]
       end
     end
-
   end
 end
