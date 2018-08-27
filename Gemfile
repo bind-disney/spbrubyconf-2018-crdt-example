@@ -5,6 +5,7 @@ gem 'hanami',       '~> 1.2'
 gem 'riak-client'
 gem 'hashie'
 gem 'representable'
+gem 'dry-monads',   '~> 1.0' 
 
 group :development do
   # Code reloading

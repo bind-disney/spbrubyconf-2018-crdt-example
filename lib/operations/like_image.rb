@@ -2,18 +2,14 @@ require 'dry/monads/result'
 require 'dry/monads/do/all'
 
 module Operations
-  class TagImage
+  class LikeImage
     include Dry::Monads::Result::Mixin
     include Dry::Monads::Do::All
 
-    def call(image_uuid:, tag:)
+    def call(image_uuid:)
       image = yield find_image(image_uuid)
-      tag = yield convert_input(tag)
 
-      image.sets[:tags].add(tag)
-      TagsRepository.new.add(tag)
-
-      Success(tag)
+      Success(image.counters[:likes].increment)
     end
 
     private
@@ -26,12 +22,6 @@ module Operations
       else
         Failure(:image_not_found)
       end
-    end
-
-    def convert_input(tag)
-      tag = tag.split.map { |i| i.capitalize }.join('')
-
-      Success(tag)
     end
   end
 end

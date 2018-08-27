@@ -2,7 +2,7 @@ class CommentsRepository
   BUCKET = 'comments'
   TYPE = Riak::Crdt::Map
 
-  def initialize(client)
+  def initialize(client = Client)
     @client = client
     @bucket = @client.bucket(BUCKET)
   end

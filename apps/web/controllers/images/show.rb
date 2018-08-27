@@ -3,14 +3,9 @@ module Web::Controllers::Images
     include Web::Action
 
     def call(params)
-      client = Riak::Client.new
-      image = ImagesRepository.new(client).find_by_uuid(params[:id])
-      comments = CommentsRepository.new(client).find_by_uuids(image.sets[:comments_uuids].members)
+			data = Queries::ImageCommentsQuery.new.call(image_uuid: params[:id])
 
-      image_representation = Web::Representers::ImageRepresenter.new(image)
-      comments_representation = Web::Representers::CommentsRepresenter.new(comments)
-
-      self.body = image_representation.to_hash.merge({ comments: comments_representation.to_hash }).to_json
+      self.body = Web::Representers::ImageCommentsRepresenter.new(data).to_json
     end
   end
 end

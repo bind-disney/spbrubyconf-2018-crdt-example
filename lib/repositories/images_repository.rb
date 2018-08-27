@@ -1,23 +1,18 @@
 class ImagesRepository
   BUCKET = 'images'
-  TYPE = Riak::Crdt::Map
+  BUCKET_TYPE = 'maps'
+  ENTITY_TYPE = Riak::Crdt::Map
 
-  def initialize(client)
+  def initialize(client = Client)
     @client = client
     @bucket = @client.bucket(BUCKET)
   end
 
   def create(image)
-    instance = TYPE.new(@bucket, image.uuid)
+    instance = ENTITY_TYPE.new(@bucket, image.uuid)
 
     instance.registers[:link] = image.link
     instance.registers[:author] = image.author
-    image.tags.each do |tag|
-      instance.sets[:tags].add(tag)
-    end
-    image.comments_uuids.each do |uuid|
-      instance.sets[:comments_uuids].add(uuid)
-    end
 
     uuids_set.add(instance.key)
 
@@ -35,7 +30,7 @@ class ImagesRepository
   end
 
   def find_by_uuid(uuid)
-    TYPE.new(@bucket, uuid)
+    exists?(uuid) ? ENTITY_TYPE.new(@bucket, uuid) : nil
   end
 
   private
@@ -44,5 +39,11 @@ class ImagesRepository
     bucket = @client.bucket(BUCKET + '_info_sets')
 
     Riak::Crdt::Set.new(bucket, BUCKET, 'sets')
+  end
+
+  def exists?(uuid)
+    @client.bucket_type(BUCKET_TYPE)
+      .bucket(BUCKET)
+      .exists?(uuid)
   end
 end

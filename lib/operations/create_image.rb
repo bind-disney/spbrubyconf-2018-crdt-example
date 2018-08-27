@@ -1,8 +1,7 @@
 module Operations
   class CreateImage
     def call(image_params:)
-      client = Riak::Client.new
-      repository = ImagesRepository.new(client)
+      repository = ImagesRepository.new
       template = Image.new(image_params)
 
       repository.create(template)
