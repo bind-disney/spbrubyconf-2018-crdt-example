@@ -148,6 +148,9 @@ GEM
     pry-byebug (3.6.0)
       byebug (~> 10.0)
       pry (~> 0.10)
+    pry-doc (0.13.4)
+      pry (~> 0.11)
+      yard (~> 0.9.11)
     public_suffix (3.0.3)
     rack (2.0.5)
     rack-test (1.1.0)
@@ -185,6 +188,7 @@ GEM
       rack
     xpath (3.1.0)
       nokogiri (~> 1.8)
+    yard (0.9.16)
 
 PLATFORMS
   ruby
@@ -199,6 +203,7 @@ DEPENDENCIES
   hanami-webconsole
   hashie
   pry-byebug
+  pry-doc
   rake
   representable
   riak-client

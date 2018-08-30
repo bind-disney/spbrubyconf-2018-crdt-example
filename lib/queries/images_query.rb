@@ -1,7 +1,11 @@
 module Queries
   class ImagesQuery
+    include Import[
+      image_repo: 'repositories.images'
+    ]
+
     def call
-      ImagesRepository.new.all
+      image_repo.all
     end
   end
 end

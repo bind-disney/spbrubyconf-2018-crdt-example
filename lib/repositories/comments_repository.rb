@@ -1,14 +1,11 @@
 class CommentsRepository
+  include Import[:db]
+
   BUCKET = 'comments'
   TYPE = Riak::Crdt::Map
 
-  def initialize(client = Client)
-    @client = client
-    @bucket = @client.bucket(BUCKET)
-  end
-
   def create(comment)
-    instance = TYPE.new(@bucket, comment.uuid)
+    instance = TYPE.new(bucket, comment.uuid)
 
     instance.registers[:author] = comment.author
     instance.registers[:text] = comment.text
@@ -17,16 +14,16 @@ class CommentsRepository
   end
 
   def find_by_uuid(uuid)
-    TYPE.new(@bucket, uuid)
+    TYPE.new(bucket, uuid)
   end
 
   def find_by_uuids(uuids)
-    output_array = []
+    uuids.map { |uuid| find_by_uuid(uuid) }
+  end
 
-    uuids.each do |uuid|
-      output_array << find_by_uuid(uuid)
-    end
+  private
 
-    output_array
+  def bucket
+    @bucket ||= db.bucket(BUCKET)
   end
 end

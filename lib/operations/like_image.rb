@@ -1,10 +1,9 @@
-require 'dry/monads/result'
-require 'dry/monads/do/all'
-
 module Operations
   class LikeImage
-    include Dry::Monads::Result::Mixin
-    include Dry::Monads::Do::All
+    include Operation
+    include Import[
+      image_repo: 'repositories.images'
+    ]
 
     def call(image_uuid:)
       image = yield find_image(image_uuid)
@@ -15,13 +14,9 @@ module Operations
     private
 
     def find_image(uuid)
-      image = ImagesRepository.new.find_by_uuid(uuid)
+      image = image_repo.find_by_uuid(uuid)
 
-      if image
-        Success(image)
-      else
-        Failure(:image_not_found)
-      end
+      image ? Success(image) : Failure(:image_not_found)
     end
   end
 end

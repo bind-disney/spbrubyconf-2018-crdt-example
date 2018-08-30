@@ -1,9 +1,12 @@
 module Web::Controllers::Likes
   class Update
     include Web::Action
+    include Import[
+      like_image: 'operations.like_image'
+    ]
 
     def call(params)
-      result = Operations::LikeImage.new.call(image_uuid: params[:image_id])
+      result = like_image.call(image_uuid: params[:image_id])
 
       if result.success?
         self.status = 200

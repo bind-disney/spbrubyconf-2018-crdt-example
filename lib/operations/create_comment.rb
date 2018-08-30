@@ -1,33 +1,30 @@
-require 'dry/monads/result'
-require 'dry/monads/do/all'
-
 module Operations
   class CreateComment
-    include Dry::Monads::Result::Mixin
-    include Dry::Monads::Do::All
+    include Operation
+    include Import[
+      comment_repo: 'repositories.comments',
+      image_repo: 'repositories.images'
+    ]
 
     def call(image_uuid:, comment_params:)
       image = yield find_image(image_uuid)
       comment = yield create_comment(comment_params)
+      comment = image.sets[:comments_uuids].add(comment.key)
 
-      Success(image.sets[:comments_uuids].add(comment.key))
+      Success(comment)
     end
 
     private
 
     def find_image(uuid)
-      image = ImagesRepository.new.find_by_uuid(uuid)
+      image = image_repo.find_by_uuid(uuid)
 
-      if image
-        Success(image)
-      else
-        Failure(:image_not_found)
-      end
+      image ? Success(image) : Failure(:image_not_found)
     end
 
     def create_comment(params)
-      comment_template = Comment.new(params)
-      comment = CommentsRepository.new.create(comment_template)
+      entity = Comment.new(params)
+      comment = comment_repo.create(entity)
 
       Success(comment)
     end

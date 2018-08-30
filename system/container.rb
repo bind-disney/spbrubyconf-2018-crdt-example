@@ -19,6 +19,12 @@ class Container < Dry::System::Container
   end
 
   load_paths! 'lib'
+
+  register_folder! 'entities'
+  register_folder! 'helpers'
+  register_folder! 'operations'
+  register_folder! 'queries'
+  register_folder! 'repositories'
 end
 
 require_relative 'import'

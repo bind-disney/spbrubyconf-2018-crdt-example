@@ -1,1 +1,0 @@
-Client = Riak::Client.new

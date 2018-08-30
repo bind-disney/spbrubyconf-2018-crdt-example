@@ -1,10 +1,14 @@
 module Operations
   class CreateImage
-    def call(image_params:)
-      repository = ImagesRepository.new
-      template = Image.new(image_params)
+    include Operation
+    include Import[
+      image_repo: 'repositories.images'
+    ]
 
-      repository.create(template)
+    def call(image_params:)
+      entity = Image.new(image_params)
+
+      image_repo.create(entity)
     end
   end
 end
