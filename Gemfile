@@ -6,6 +6,8 @@ gem 'riak-client'
 gem 'hashie'
 gem 'representable'
 
+gem 'puma'
+
 gem 'dry-monads',   '~> 1.0'
 gem 'dry-system'
 gem 'dry-system-hanami', github: 'davydovanton/dry-system-hanami'
@@ -26,8 +28,4 @@ end
 group :test do
   gem 'rspec'
   gem 'capybara'
-end
-
-group :production do
-  # gem 'puma'
 end
