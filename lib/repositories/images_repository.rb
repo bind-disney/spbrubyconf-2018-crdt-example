@@ -33,6 +33,23 @@ class ImagesRepository
     exists?(uuid) ? ENTITY_TYPE.new(@bucket, uuid) : nil
   end
 
+  def delete(uuid)
+    bucket_path.delete(uuid)
+    uuids_set.reload.remove(uuid)
+  end
+
+  def delete_all
+    all.select { |i| i != nil }.each do |image|
+      delete(image.uuid)
+    end
+
+    uuids_set.members.each do |uuid|
+      uuids_set.reload.remove(uuid)
+    end
+
+    true
+  end
+
   private
 
   def uuids_set
@@ -42,8 +59,11 @@ class ImagesRepository
   end
 
   def exists?(uuid)
+      bucket_path.exists?(uuid)
+  end
+
+  def bucket_path
     @client.bucket_type(BUCKET_TYPE)
       .bucket(BUCKET)
-      .exists?(uuid)
   end
 end

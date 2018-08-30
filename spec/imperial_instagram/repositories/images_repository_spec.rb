@@ -20,16 +20,36 @@ RSpec.describe ImagesRepository do
     end
   end
 
-  describe '#all' do
-    let(:expectation) { [Riak::Crdt::Map.new(image_bucket, image_uuid)] }
+  describe '#delete' do
+    before { image_repository.create(image_entity) }
 
-    it 'returns array with created image record' do
-      expect(image_repository.all).to eq(expectation)
+    it 'deletes a record from db' do
+      image_repository.delete(image_uuid)
+
+      expect(client.bucket_type('maps')
+        .bucket('images')
+        .exists?(image_uuid)).to be false
+    end
+
+    it 'deletes record uuid form images list' do
+      image_repository.delete(image_uuid)
+
+      list = Riak::Crdt::Set.new(image_bucket, 'images', 'sets')
+      expect(list.members.to_a).not_to include(image_uuid)
+    end
+  end
+
+  describe '#all' do
+    let!(:expectation) { [image_repository.create(image_entity)] }
+
+    it 'returns array with created image records' do
+      expect(image_repository.all.count).to eq 1
+      expect(image_repository.all).to all(be_a_kind_of(Riak::Crdt::Map))
     end
   end
 
   describe '#find_by_uuid' do
-    let(:expectation) { Riak::Crdt::Map.new(image_bucket, image_uuid) }
+    let!(:expectation) { image_repository.create(image_entity) }
 
     it 'returns Image record by its uuid' do
       expect(image_repository.find_by_uuid(image_uuid)).to eq(expectation)

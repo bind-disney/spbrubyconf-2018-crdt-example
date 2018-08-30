@@ -27,7 +27,6 @@ module Operations
 
     def create_comment(params)
       comment_template = Comment.new(params)
-      # TODO comment_template validation
       comment = CommentsRepository.new.create(comment_template)
 
       Success(comment)

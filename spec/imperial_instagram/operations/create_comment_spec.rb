@@ -2,6 +2,13 @@ RSpec.describe Operations::CreateComment do
   include_context 'shared image'
   include_context 'shared comment'
 
+  subject(:call_operation) do
+    described_class.new.call(image_uuid: test_image_uuid,
+                             comment_params: comment_params)
+  end
+
+  let(:test_image_uuid) { image_uuid }
+
   before do
     allow_any_instance_of(Comment).to receive(:uuid).and_return(comment_uuid)
     allow_any_instance_of(Image).to receive(:uuid).and_return(image_uuid)
@@ -14,13 +21,27 @@ RSpec.describe Operations::CreateComment do
 
   describe '@call' do
     let(:expected_comment) { Riak::Crdt::Map.new(comment_bucket, comment_uuid) }
-    let(:image_for_comment) { Riak::Crdt::Map.new(image_bucket, image_uuid) } 
+    let!(:image_for_comment) { ImagesRepository.new.create(Image.new(image_params)) } 
 
-    it 'creates Comment and assigns it to Image' do
-      operation = Operations::CreateComment.new(client)
-      operation.call(image_uuid: image_uuid, comment_params: comment_params)
+    context 'image exists' do
+      it 'creates Comment and assigns it to Image' do
+        call_operation
 
-      expect(image_for_comment.sets[:comments_uuids].members).to include(comment_uuid)
+        image_for_comment.reload
+        expect(image_for_comment.sets[:comments_uuids].members).to include(comment_uuid)
+      end
+
+      it 'returns Success' do
+        expect(call_operation).to be_a_success
+      end
+    end
+
+    context 'image not exists' do
+      let(:test_image_uuid) { 'invaliduuid' }
+
+      it 'returns Failure' do
+        expect(call_operation).to be_a_failure
+      end
     end
   end
 end
