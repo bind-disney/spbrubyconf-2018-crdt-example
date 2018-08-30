@@ -5,7 +5,10 @@ gem 'hanami',       '~> 1.2'
 gem 'riak-client'
 gem 'hashie'
 gem 'representable'
-gem 'dry-monads',   '~> 1.0' 
+
+gem 'dry-monads',   '~> 1.0'
+gem 'dry-system'
+gem 'dry-system-hanami', github: 'davydovanton/dry-system-hanami'
 
 group :development do
   # Code reloading
