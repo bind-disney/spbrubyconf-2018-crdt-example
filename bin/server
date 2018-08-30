@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+exec bundle exec hanami server --server=puma --host=0.0.0.0 -p ${WEB_PORT:-3000} --no-code-reloading

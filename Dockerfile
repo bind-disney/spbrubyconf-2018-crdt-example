@@ -1,0 +1,13 @@
+FROM ruby:2.5.1
+
+ENV LANG="en_US.UTF-8" \
+    APP_HOME="/app" \
+    BUNDLE_SILENCE_ROOT_WARNING="1"
+
+RUN mkdir -p $APP_HOME
+
+WORKDIR $APP_HOME
+
+VOLUME $APP_HOME
+
+CMD ["bin/server"]
