@@ -1,18 +1,29 @@
-module Web::Controllers::Comments
-  class Create
-    include Web::Action
-    include Import[
-      create_comment: 'operations.create_comment'
-    ]
+module Web
+  module Controllers
+    module Images
+      module Comments
+        class Create
+          include Web::Action
+          include Import[
+            create_comment: 'operations.create_comment'
+          ]
 
-    def call(params)
-			result = create_comment.call(image_uuid: params[:image_id], comment_params: params[:comment])
-      if result.success?
-        self.status = 200
-        self.body = Web::Representers::CommentRepresenter.new(result.value!)
-      else
-        self.status = 400
-        self.body = result.failure
+          class Params < ::Controllers::Params
+            params do
+              required(:image_id).filled(:str?)
+              required(:comment).filled(:hash?)
+            end
+          end
+
+          params Params
+
+          def call(params)
+            input = validate_params(params)
+            result = create_comment.call(image_uuid: input[:image_id], comment_params: input[:comment])
+
+            respond_with(result, serializer: Web::Representers::CommentRepresenter, status: 201)
+          end
+        end
       end
     end
   end

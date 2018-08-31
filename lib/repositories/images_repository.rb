@@ -30,7 +30,7 @@ class ImagesRepository
   end
 
   def delete_all
-    all.reject(&:nil?).each { |image| delete(image.uuid) }
+    all.reject(&:nil?).each { |image| delete(image.key) }
 
     uuids_set.members.each do |uuid|
       uuids_set.reload.remove(uuid)

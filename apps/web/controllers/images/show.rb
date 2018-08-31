@@ -1,18 +1,27 @@
-module Web::Controllers::Images
-  class Show
-    include Web::Action
-    include Import[
-      list_query: 'queries.image_comments_query'
-    ]
+module Web
+  module Controllers
+    module Images
+      class Show
+        include Web::Action
+        include Import[
+          list_query: 'queries.image_comments_query'
+        ]
 
-    params do
-      required(:id).filled(:int?)
-    end
+        class Params < ::Controllers::Params
+          params do
+            required(:id).filled(:str?)
+          end
+        end
 
-    def call(params)
-			data = list_query.call(image_uuid: params[:id])
+        params Params
 
-      self.body = Web::Representers::ImageCommentsRepresenter.new(data).to_json
+        def call(params)
+          input = validate_params(params)
+          data = list_query.call(image_uuid: input[:id])
+
+          respond_with(data, serializer: Web::Representers::ImageCommentsRepresenter)
+        end
+      end
     end
   end
 end

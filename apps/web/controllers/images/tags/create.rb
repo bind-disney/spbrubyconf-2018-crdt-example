@@ -1,26 +1,27 @@
-module Web::Controllers::Tags
-  class Create
-    include Web::Action
-    include Import[
-      tag_image: 'operations.tag_image'
-    ]
+module Web
+  module Controllers
+    module Tags
+      class Create
+        include Web::Action
+        include Import[
+          tag_image: 'operations.tag_image'
+        ]
 
-    params do
-      required(:image_id).filled(:int?)
-      required(:tag).filled(:str?)
-    end
+        class Params < ::Controllers::Params
+          params do
+            required(:image_id).filled(:int?)
+            required(:tag).filled(:str?)
+          end
+        end
 
-    def call(params)
-      result = tag_image.call(image_uuid: params[:image_id], tag: params[:tag])
+        params Params
 
-      respond_with(result, serializer)
+        def call(params)
+          input = validate_params(params)
+          result = tag_image.call(image_uuid: input[:image_id], tag: input[:tag])
 
-      if result.success?
-        self.status = 200
-        self.body = result.value!
-      else
-        self.status = 400
-        self.body = result.failure
+          respond_with(result, status: 201)
+        end
       end
     end
   end

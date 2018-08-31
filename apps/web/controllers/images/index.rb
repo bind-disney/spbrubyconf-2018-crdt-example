@@ -1,14 +1,18 @@
-module Web::Controllers::Images
-  class Index
-    include Web::Action
-    include Import[
-      list_query: 'queries.images_query'
-    ]
+module Web
+  module Controllers
+    module Images
+      class Index
+        include Web::Action
+        include Import[
+          list: 'operations.list_images'
+        ]
 
-    def call(params)
-      data = list_query.call
+        def call(_params)
+          result = list.call
 
-      self.body = Web::Representers::ImageRepresenter.for_collection.new(data).to_json
+          respond_with(result, serializer: Web::Representers::ImageRepresenter.for_collection)
+        end
+      end
     end
   end
 end

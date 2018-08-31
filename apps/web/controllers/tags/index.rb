@@ -1,11 +1,18 @@
-module Web::Controllers::Tags
-  class Index
-    include Web::Action
+module Web
+  module Controllers
+    module Tags
+      class Index
+        include Web::Action
+        include Import[
+          tag_repo: 'repositories.tags'
+        ]
 
-    def call(params)
-      data = TagRepository.new.all
+        def call(params)
+          data = tag_repo.all
 
-      self.body = data.to_json
+          respond_with(data)
+        end
+      end
     end
   end
 end

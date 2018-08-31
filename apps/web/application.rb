@@ -1,7 +1,8 @@
 require 'hanami/helpers'
 require 'hanami/assets'
 
-require_relative '../../lib/helpers/action_helpers'
+require_relative '../../lib/controllers/responder'
+require_relative '../../lib/controllers/params_validation'
 
 module Web
   class Application < Hanami::Application
@@ -222,7 +223,8 @@ module Web
       #
       # See: http://www.rubydoc.info/gems/hanami-controller#Configuration
       controller.prepare do
-        include Helpers::ActionHelpers
+        include ::Controllers::Responder
+        include ::Controllers::ParamsValidation
       end
 
       # Configure the code that will yield each time Web::View is included
