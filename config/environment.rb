@@ -4,6 +4,11 @@ require_relative '../lib/imperial_instagram'
 require_relative '../apps/web/application'
 require_relative '../system/container'
 
+# NOTE: Use dry-system for lib directory management
+Hanami::Components.register('code') do
+  run {}
+end
+
 Hanami.configure do
   mount Web::Application, at: '/'
 
@@ -14,9 +19,5 @@ Hanami.configure do
 
   environment :production do
     logger level: :info, formatter: :json, filter: []
-
-    mailer do
-      delivery :smtp, address: ENV.fetch('SMTP_HOST'), port: ENV.fetch('SMTP_PORT')
-    end
   end
 end
